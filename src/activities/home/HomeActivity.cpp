@@ -17,7 +17,6 @@
 #include "MappedInputManager.h"
 #include "OpdsServerStore.h"
 #include "RecentBooksStore.h"
-#include "activities/network/NewsDownloadActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
 
@@ -296,8 +295,6 @@ void HomeActivity::onSettingsOpen() { activityManager.goToSettings(); }
 
 void HomeActivity::onFileTransferOpen() { activityManager.goToFileTransfer(); }
 
-void HomeActivity::onDownloadNewsOpen() {
-  startActivityForResult(std::make_unique<NewsDownloadActivity>(renderer, mappedInput), [](const ActivityResult&) {});
-}
+void HomeActivity::onDownloadNewsOpen() { activityManager.goToNewsDownload(); }
 
 void HomeActivity::onOpdsBrowserOpen() { activityManager.goToBrowser(); }
