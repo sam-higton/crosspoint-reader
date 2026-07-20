@@ -1,6 +1,7 @@
 #include "NewsDownloadActivity.h"
 
 #include <ArduinoJson.h>
+#include <Epub.h>
 #include <GfxRenderer.h>
 #include <HalStorage.h>
 #include <I18n.h>
@@ -191,6 +192,17 @@ void NewsDownloadActivity::startDownload() {
     state_ = ERROR;
     errorMessage_ = "Failed to save news file";
     return;
+  }
+
+  // The layout cache is keyed by file path (epub_<hash-of-path>), so the new
+  // edition would otherwise be rendered from the previous edition's cached
+  // sections and inherit its reading progress. Constructing Epub without
+  // load() only derives the cache path; clearCache() removes the directory.
+  const Epub epub(NEWS_EPUB_PATH, "/.crosspoint");
+  if (!epub.clearCache()) {
+    // Non-fatal: the file itself is fine, but log it since stale layout may
+    // be shown until the cache is cleared manually.
+    LOG_ERR("NEWS", "Failed to clear stale cache at %s", epub.getCachePath().c_str());
   }
 
   LOG_DBG("NEWS", "Downloaded %s (%zu bytes)", NEWS_EPUB_PATH, fileProgress_);
